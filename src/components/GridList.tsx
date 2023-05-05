@@ -11,9 +11,17 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const GridList = ({ pokemonList, image, types, page, count }) => {
+interface Props {
+  pokemonList: Array<any>
+  image: Array<any>
+  types: Array<any>
+  page: number
+  count: number
+}
+
+const GridList = ({ pokemonList, image, types, page, count }: Props) => {
   const theme = createTheme({});
-  const pasarAMayus = (pokemon) => {
+  const pasarAMayus = (pokemon: any) => {
     return pokemon.charAt(0).toUpperCase() + pokemon.slice(1);
   };
   return (
@@ -59,12 +67,6 @@ const GridList = ({ pokemonList, image, types, page, count }) => {
                 style={{
                   textDecoration: "none",
                   color: "rgb(52, 105, 165)",
-                  "&:hover": {
-                    /* textDecoration: "underline", */
-                    cursor: "pointer",
-                    color: "rgb(36, 73, 115)", /* No funciona al hacer hover */
-                    fontWeight: "700", /* bold */
-                  },
                 }}
               >
                 <Typography
@@ -73,6 +75,13 @@ const GridList = ({ pokemonList, image, types, page, count }) => {
                   component="div"
                   justifyContent="flex-start"
                   px={1}
+                  sx={{
+                    "&:hover": {
+                    /* textDecoration: "underline", */
+                    cursor: "pointer",
+                    color: "rgb(36,73,115)",
+                    fontWeight: "500", 
+                  }}}
                 >
                   {pasarAMayus(pokemon)}
                 </Typography>
@@ -85,7 +94,7 @@ const GridList = ({ pokemonList, image, types, page, count }) => {
                 }}
               >
                 {types[pokemon] &&
-                  types[pokemon].map((type) => (
+                  types[pokemon].map((type: string) => (
                     <Typography
                       variant="body2"
                       color="text.secondary"

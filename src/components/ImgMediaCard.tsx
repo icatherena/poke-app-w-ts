@@ -12,25 +12,58 @@ import { Link } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 /* import { useTheme } from "@emotion/react"; */
 
-const ImgMediaCard = (props) => {
-  const [pokemon, setPokemon] = useState();
-  const [listaEvoluciones, setListaEvoluciones] = useState([]);
-  const [mensaje, setMensaje] = useState();
+interface Props {
+  pokemon?: any
+  numPokedex: number | undefined
+  name: string | undefined
+  image: string | undefined
+  bexp: number | undefined
+  types: Array<Types>
+  moves: Array<Move>
+  abilities: Array<Abilities>
+  initialForm?: Array<Evoluciones>
+  midForm: Array<Evoluciones>
+  finalForm: Array<Evoluciones>
+}
+
+interface Evoluciones {
+  species: {
+    name: string
+  }
+  evolves_to: any
+}
+
+interface Types {
+  name: string
+}
+
+interface Abilities {
+  name: string
+}
+
+interface Move {
+  name: string
+}
+
+const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, initialForm, midForm, finalForm}: Props) => {
+  const [pokemon, setPokemon] = useState<string>();
+  const [listaEvoluciones, setListaEvoluciones] = useState<Array<Evoluciones>>([]);
+  const [mensaje, setMensaje] = useState<string | null>();
 
   useEffect(() => {
-    setPokemon(props.pokemon);
-  }, [props.pokemon]);
+    setPokemon(name);
+  }, [name]);
 
   useEffect(() => {
-    evaluarEvoluciones(props);
-  }, [props]);
+    evaluarEvoluciones();
+  }, []);
 
-  const evaluarEvoluciones = (props) => {
+  const evaluarEvoluciones = () => {
     // Para los casos que la cadena evolutiva es nula o indefinida
     // se setea su valor unicamente cuando es distinto de nulo o indefinido
-    if (props.initialForm && props.initialForm.length > 0) {
-      if (props.initialForm !== null || props.initialForm !== undefined) {
-        setListaEvoluciones([props.initialForm]);
+    if (initialForm && initialForm.length > 0) {
+      if (initialForm !== null || initialForm !== undefined) {
+        setListaEvoluciones(initialForm);
       }
       // En un inicio, mensaje al no estar definido setea la cadena que se le asignaría en el ese
       // Para salvar esa situación, se setea el valor de mensaje en null
@@ -39,15 +72,15 @@ const ImgMediaCard = (props) => {
         setMensaje("No posee cadena evolutiva");
     }
     // A continuación se evalúa si existe y si contiene un elemento
-    if (props.midForm && props.midForm.length > 0) {
+    if (midForm && midForm.length > 0) {
       // Para concatenar los elementos que traería midForm si fuera un array
       // y no un único elemento,
       // se crea un segundo array
-      let midList = [];
+      let midList: Array<any> = [];
       // Se evalúa si midForm es o no un array de elementos
-      if (Array.isArray(props.midForm)) {
+      if (Array.isArray(midForm)) {
         // Si cumple la condición, se mapea midForm y se asigna al array midList
-        midList = props.midForm.map((item) => item);
+        midList = midForm.map((item: any) => item);
         // A continuación, para añadir los elementos del array midList,
         // se usa concat para traer una copia de los elementos que ya están
         // seteados en listaEvoluciones y se añaden los que trae midList
@@ -55,33 +88,33 @@ const ImgMediaCard = (props) => {
       } else {
         // Si midForm no cumple con la condición (no es un array),
         // se setea midForm de la misma forma que se hizo con midList usando concat
-        setListaEvoluciones((prevList) => prevList.concat(props.midForm));
+        setListaEvoluciones((prevList) => prevList.concat(midForm));
       }
     }
     // Como no se tiene certeza de que el pokemon inicial tenga o no
     // una segunda evolución, se evalua nuevamente si contiene al menos un elemento
-    if (props.finalForm && props.finalForm.length > 0) {
+    if (finalForm && finalForm.length > 0) {
       // Se evalúa si finalForm tiene algún valor distinto de indefinido o nulo
       // Si no se evaluara en este momento, se añadiría más adelante
       // un array de elementos nulos/indefinidos que se mostrarían al mapear
       // listaEvoluciones dentro del return
-      if (props.finalForm !== null && props.finalForm !== undefined) {
+      if (finalForm !== null && finalForm !== undefined) {
         // Si cumple condición, se evalúa a continuación si se trata de un array
-        if (Array.isArray(props.finalForm)) {
+        if (Array.isArray(finalForm)) {
           // Debido a que finalForm a diferencia de initial y midForm trae los elementos como
           // un array, para concatenarlos y evitar que se añadan a listaEvoluciones como otro array
           // se recorre el array mediante el uso de for, y sólo si el elemento no es nulo, se añade
           // a listaEvoluciones
-          for (let i = 0; i < props.finalForm.length; i++) {
-            if (props.finalForm[i] !== null) {
+          for (let i = 0; i < finalForm.length; i++) {
+            if (finalForm[i] !== null) {
               setListaEvoluciones((prevList) =>
-                prevList.concat(props.finalForm[i])
+                prevList.concat(finalForm[i])
               );
             }
           }
         } else {
           // Si no cumple la condición (no es un array, simplemente se añade el elemento a listaEvoluciones)
-          setListaEvoluciones((prevList) => prevList.concat(props.finalForm));
+          setListaEvoluciones((prevList) => prevList.concat(finalForm));
         }
       }
     }
@@ -89,8 +122,8 @@ const ImgMediaCard = (props) => {
 
   useEffect(() => {}, [listaEvoluciones]);
 
-  const pasarAMayus = (props) => {
-    return props.name.charAt(0).toUpperCase() + props.name.slice(1);
+  const pasarAMayus = (name: any) => {
+    return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
   const theme = createTheme({});
@@ -139,8 +172,8 @@ const ImgMediaCard = (props) => {
           >
             <CardMedia
               component="img"
-              alt={props.name}
-              image={props.image}
+              alt={name}
+              image={image}
               sx={{
                 /* backgroundColor: "rgb(238, 249, 238)", */
                 height: "fit-content",
@@ -165,30 +198,30 @@ const ImgMediaCard = (props) => {
               }}
             >
               <Typography gutterBottom variant="h4" component="div">
-                <b>{pasarAMayus(props)}</b>
+                <b>{pasarAMayus(name)}</b>
               </Typography>
 
-              <Divider variant="body1">
+              <Divider>
                 <b>POSICIÓN EN LA POKEDEX</b>
               </Divider>
-              <Typography variant="body1">#{props.numPokedex}</Typography>
+              <Typography variant="body1">#{numPokedex}</Typography>
               <br />
 
-              <Divider variant="body1">
+              <Divider >
                 <b>ESPERIENCIA BASE</b>
               </Divider>
-              <Typography variant="body1">{props.bexp} xp</Typography>
+              <Typography variant="body1">{bexp} xp</Typography>
               <br />
 
-              <Divider variant="body1">
+              <Divider >
                 <b>POKEMÓN TIPO</b>
               </Divider>
               <Typography variant="body1">
-                {props.types.map((type) => type.type.name).join(" - ")}
+                {types.map((type: any) => type.type.name).join(" - ")}
               </Typography>
               <br />
 
-              <Divider variant="body1">
+              <Divider>
                 <b>CADENA EVOLUTIVA</b>
               </Divider>
               <Grid container justifyContent={"center"}>
@@ -197,7 +230,7 @@ const ImgMediaCard = (props) => {
                     <Typography>{mensaje}</Typography>
                   </Grid>
                 ) : (
-                  listaEvoluciones.map((item, index) => (
+                  listaEvoluciones.map((item: any, index) => (
                     <Grid item xs={12} key={index}>
                       <Link
                         to={`/descripcion/${item}/`} 
@@ -211,10 +244,10 @@ const ImgMediaCard = (props) => {
                           textDecoration: "none",
 
                           color: "rgb(52, 105, 165)",
-                          "&:hover": {
+                          /* "&:hover": {
                             color: "rgb(36,73,115)",
                             weight: "bold",
-                          },
+                          }, */
                         }}
                       >
                         {item}
@@ -235,23 +268,23 @@ const ImgMediaCard = (props) => {
               </Grid>
               <br />
 
-              <Divider variant="body1">
+              <Divider>
                 <b>HABILIDADES</b>
               </Divider>
               <Typography variant="body1">
-                {props.abilities
-                  .map((ability) => ability.ability.name)
+                {abilities
+                  .map((ability: any) => ability.ability.name)
                   .join(" - ")}
               </Typography>
               <br />
 
-              <Divider variant="body1">
+              <Divider>
                 <b>MOVIMIENTOS</b>
               </Divider>
               <Typography variant="body1">
-                {props.moves
+                {moves
                   .slice(0, 5)
-                  .map((move) => move.move.name)
+                  .map((move: any) => move.move.name)
                   .join(", ")}
               </Typography>
               <br />

@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from "react";
 import GridList from "../../components/GridList";
 import NavBar from "../../components/NavBar";
-import { getPokemonById, getPokemones } from "../../api/apis";
+import { getPokemonByName, getPokemones } from "../../api/apis";
 import { Grid } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import Loading from "../../components/Loading";
 
+interface Pokemones {
+  name: string
+  image: string
+  type: Types 
+}
+
+interface Types {
+  name: string
+}
+
 const Grilla = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [pokemonList, setPokemonList] = useState([]);
-  const [count, setCount] = useState(0);
+  const [pokemonList, setPokemonList] = useState<Array<string>>([])
+  const [count, setCount] = useState<number>(0)
 
-  const [image, setImage] = useState({});
-  const [types, setTypes] = useState([]);
+  const [image, setImage] = useState<Array<Pokemones>>([])
+  const [types, setTypes] = useState<Array<Pokemones>>([])
 
   const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const page = parseInt(query.get("pagina") || "1", 10);
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("pagina") || "1", 10)
 
   useEffect(() => {
     getPokemones(page).then((res) => {
-      setPokemonList(res.data.results.map((pokemon) => pokemon.name));
-      console.log(res.data.count)
-      setCount(/* (res.data.count % 12) +  */ 1 + parseInt(res.data.count / 12));
+      setPokemonList(res.data.results.map((pokemon: Pokemones) => pokemon.name));
+      setCount(/* (res.data.count % 12) +  */ 1 + (res.data.count / 12));
     });
   }, [page]);
 
@@ -51,18 +60,19 @@ const Grilla = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    console.log(pokemonList)
     Promise.all(
-      pokemonList.map((pokemon) =>
-        getPokemonById(pokemon).then((res) => ({
+      pokemonList.map((pokemon:string) =>
+        getPokemonByName(pokemon).then((res) => ({
           name: pokemon,
           image: res.data.sprites.other["official-artwork"].front_default,
-          types: res.data.types.map((type) => type.type.name),
+          types: res.data.types.map((type: Pokemones) => type.type.name),
         }))
       )
     )
-      .then((results) => {
-        const newImage = {};
-        const newTypes = {};
+      .then((results:any[]) => {
+        const newImage:any = {};
+        const newTypes:any = {};
         results.forEach((result) => {
           newImage[result.name] = result.image;
           newTypes[result.name] = result.types;

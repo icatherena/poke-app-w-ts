@@ -5,26 +5,26 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
-const FloatingButton = (props) => {
-  const [redirectUrl, setRedirectUrl] = useState();
-  const [icon, setIcon] = useState();
-  const [tooltipName, setTooltipName] = useState();
+const FloatingButton = ({pokemon, pokeId, type}: any) => {
+  const [redirectUrl, setRedirectUrl] = useState<string>();
+  const [icon, setIcon] = useState<any>();
+  const [tooltipName, setTooltipName] = useState<string>();
 
   useEffect(() => {
-    if (props.type === "next") {
-      setRedirectUrl(`/descripcion/${parseInt(props.pokemon.id) + 1}`);
+    if (type === "next") {
+      setRedirectUrl(`/descripcion/${parseInt(pokeId) + 1}`);
       setIcon(<NavigateNextIcon fontSize="large" color="primary" />);
       setTooltipName("Siguiente");
-    } else if (props.type === "prev") {
-      setRedirectUrl(`/descripcion/${parseInt(props.pokemon.id) - 1}`);
+    } else if (type === "prev") {
+      setRedirectUrl(`/descripcion/${parseInt(pokeId) - 1}`);
       setIcon(<NavigateBeforeIcon fontSize="large" color="primary" />);
       setTooltipName("Anterior");
-    } else if (props.type === "list") {
+    } else if (type === "list") {
       setRedirectUrl(`/lista`)
       setIcon(<ArrowBackIcon fontSize="small" color="primary" />);
       setTooltipName("Volver a la lista");
     }
-  }, [props.pokemon]);
+  }, [pokemon]);
 
   return (
     <Tooltip title={tooltipName} arrow>

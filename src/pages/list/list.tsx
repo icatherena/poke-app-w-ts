@@ -19,7 +19,7 @@ const List = () => {
   useEffect(() => {
     getPokemons(page).then((pokemon) => {
       setPokemon(pokemon.data.results);
-      setCount((pokemon.data.count % 20) + parseInt(pokemon.data.count / 20));
+      setCount((pokemon.data.count % 20) + /* parseInt */(pokemon.data.count / 20));
     });
   }, [page]);
   console.log(count)

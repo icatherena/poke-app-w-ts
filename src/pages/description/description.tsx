@@ -5,21 +5,29 @@ import NotFound from "../../components/NotFound";
 import { useParams } from "react-router-dom";
 import FloatingButton from "../../components/FloatingButton";
 import {
-  getPokemonById,
+  getPokemonByName,
   getChainIdById,
   getEvolutionChainById,
 } from "../../api/apis";
 import { Grid } from "@mui/material";
 import Loading from "../../components/Loading";
 
+interface Evoluciones {
+  species: {
+    name: string
+  }
+  evolves_to: any
+}
+
 const Description = () => {
-  const { id } = useParams();
+  const {name} = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [pokemon, setPokemon] = useState();
-  const [pokeName, setPokeName] = useState("");
-  const [pokeImage, setPokeImage] = useState("");
+  const [pokemon, setPokemon] = useState<string>();
+  const [pokeId, setPokeId] = useState<number | undefined>();
+  const [pokeImage, setPokeImage] = useState<string>();
+  const [baseExp, setBaseExp] = useState<number>();
   const [pokeAbilities, setPokeAbilities] = useState([]);
   const [pokeTypes, setPokeTypes] = useState([]);
   const [pokeMoves, setPokeMoves] = useState([]);
@@ -27,56 +35,49 @@ const Description = () => {
   const [PokeSpeciesUrl, setPokeSpeciesUrl] = useState();
 
   const [evolutionChainUrl, setEvolutionChainUrl] = useState([]);
-  const [initialForm, setInitialForm] = useState();
-  const [midForm, setMidForm] = useState([]);
-  const [finalForm, setFinalForm] = useState([]);
+  const [initialForm, setInitialForm] = useState<Array<Evoluciones>>();
+  const [midForm, setMidForm] = useState<Array<Evoluciones>>([]);
+  const [finalForm, setFinalForm] = useState<Array<Evoluciones>>([]);
 
   useEffect(() => {
     setIsLoading(true);
     
-    getPokemonById(id)
+    getPokemonByName(name)
       .then((res) => {
-        setPokemon(res.data);
-        setPokeName(res.data.name);
+        setPokemon(res.data.name);
+        setPokeId(res.data.id);
+        setBaseExp(res.data.base_experience);
         setPokeImage(res.data.sprites.other['official-artwork'].front_default);
-        console.log(res.data.sprites.other['official-artwork'].front_default);
         setPokeAbilities(res.data.abilities);
         setPokeTypes(res.data.types);
         setPokeMoves(res.data.moves);
 
         setPokeSpeciesUrl(res.data.species.url); 
-        console.log(res.data.species.url);
+        /* console.log(res.data.species.url); */
         let speciesId = res.data.species.url.split("/")[6];
-        console.log(speciesId)
+        /* console.log(speciesId) */
 
         getChainIdById(parseInt(speciesId))
           .then((res) => {
             setEvolutionChainUrl(res.data.evolution_chain.url);
-            console.log(res.data.evolution_chain.url);
+            /* console.log(res.data.evolution_chain.url); */
             let chainId = res.data.evolution_chain.url.split("/")[6];
-            console.log(chainId);
+            /* console.log(chainId); */
 
             getEvolutionChainById(parseInt(chainId))
               .then((res) => {
                 setInitialForm(res.data.chain.species.name);
-                /* console.log(res.data.chain.species.name) */
                 setMidForm(
-                  res.data.chain.evolves_to?.map((item) => item.species.name)
+                  res.data.chain.evolves_to?.map((item: Evoluciones) => item.species.name)
                 );
-                /* console.log(res.data.chain.evolves_to?.map((item) => item.species.name)) */
                 setFinalForm(
-                  res.data.chain.evolves_to?.map((item) =>
-                    item.evolves_to?.map((item) => item.species.name)
+                  res.data.chain.evolves_to?.map((item: Evoluciones) =>
+                    item.evolves_to?.map((item: Evoluciones) => item.species.name)
                   )
                 );
-                /* console.log(res.data.chain.evolves_to?.map((item) => item.evolves_to?.map((item) => item.species.name))) */
               });
           })
 
-          /* .catch((error) => {
-            console.error(null);
-            setEvolutionChainUrl(null);
-          }) */
       })
 
       .catch((error) => {
@@ -86,7 +87,7 @@ const Description = () => {
 
       .finally(() => setIsLoading(false));
       
-  }, [id]);
+  }, [name]);
 
   return (
     isLoading ? (
@@ -118,10 +119,10 @@ const Description = () => {
           mt = { 9 }
         >
           <ImgMediaCard
-            pokemon={pokemon}
-            name={pokeName}
-            numPokedex={pokemon.id}
-            bexp={pokemon.base_experience}
+            /* pokemon={pokemon} */
+            name={pokemon}
+            numPokedex={pokeId}
+            bexp={baseExp}
             initialForm={initialForm}
             midForm={midForm}
             finalForm={finalForm}
@@ -147,14 +148,16 @@ const Description = () => {
           <Grid item>
             <FloatingButton 
               pokemon = {pokemon} 
+              pokeId = {pokeId}
               type = "prev"
-              disabled = {pokemon.id <= 0}
+              disabled = {pokeId == undefined}
             />
           </Grid>
           <Grid item>
             <FloatingButton 
-              pokemon={pokemon} 
-              name={pokeName} 
+              pokemon = {pokemon} 
+              pokeId = {pokeId}
+              /* name={pokemon}  */
               type="next"/>
           </Grid>
         </Grid>

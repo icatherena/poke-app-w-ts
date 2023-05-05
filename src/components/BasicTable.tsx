@@ -20,7 +20,16 @@ import {
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-const BasicTable = ({ pokemon, page, count }) => {
+interface Props {
+  pokemon: Array<Pokemon>;
+  page: number
+  count: number
+}
+interface Pokemon {
+  name: string
+}
+
+const BasicTable = ({ pokemon, page, count }: Props) => {
   const [listPokemon, setListPokemon] = useState(pokemon);
 
   useEffect(() => {
@@ -56,7 +65,7 @@ const BasicTable = ({ pokemon, page, count }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {listPokemon.map((row, index) => (
+              {listPokemon.map((row: Pokemon, index) => (
                 <TableRow
                   key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -66,7 +75,7 @@ const BasicTable = ({ pokemon, page, count }) => {
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
                     <Link
-                      to={`/descripcion/${/* spliceUrl(row.url) */ row.name}/`}
+                      to={`/descripcion/${row.name}/`}
                     >
                       <OpenInNewIcon
                         fontSize="small"

@@ -6,16 +6,19 @@ import Description from './pages/description/description';
 import Grilla from './pages/list/gridList';
 import List from './pages/list/list';
 import { Grid, ThemeProvider } from '@mui/material';
+import { useTheme } from '@emotion/react';
 
 function App() {
+const theme = useTheme()
+
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <Routes>
-        <Route path='/' element={<Home />} exact />
-        <Route path='/lista' element={<List />} exact />
-        <Route path='/grilla' element={<Grilla />} exact />
-        <Route path='/descripcion/:id' element={<Description />} exact />
-        <Route path='*' element={<Home />} exact />
+        <Route path='/' element={<Home />} />
+        <Route path='/lista' element={<List />} />
+        <Route path='/grilla' element={<Grilla />}  />
+        <Route path='/descripcion/:name' element={<Description />} />
+        <Route path='*' element={<Home />} />
       </Routes>
     </ThemeProvider>
   );

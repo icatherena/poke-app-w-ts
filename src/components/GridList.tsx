@@ -12,17 +12,29 @@ import {
 import { Link } from "react-router-dom";
 
 interface Props {
-  pokemonList: Array<any>
+  /* pokemonList: Array<any>
   image: Array<any>
   types: Array<any>
   page: number
-  count: number
+  count: number */
+  pokemones: Array<Pokemon>
 }
 
-const GridList = ({ pokemonList, image, types, page, count }: Props) => {
+interface Pokemon {
+    id: number
+    name: Array<string>
+    images: string | undefined 
+    types: Array<any>
+}
+
+interface Type {
+  pokemon_v2_type: any
+}
+
+const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: Props) => {
   const theme = createTheme({});
   const pasarAMayus = (pokemon: any) => {
-    return pokemon.charAt(0).toUpperCase() + pokemon.slice(1);
+    return pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   };
   return (
     <Grid
@@ -33,8 +45,8 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
         gap: "2em",
       }}
     >
-      {pokemonList.map((pokemon, index) => (
-        <Grid item key={index}>
+      {pokemones.map((pokemon: Pokemon) => (
+        <Grid item key={pokemon.id}>
           <Card
             sx={{
               maxWidth: 345,
@@ -47,10 +59,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
             }}
           >
             <CardMedia
-              component="img"
-              alt={pokemon}
-              height="fit-content"
-              image={image[pokemon]}
+              image={pokemon.images}
             />
             <CardContent
               sx={{
@@ -63,7 +72,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
               }}
             >
               <Link
-                to={`/descripcion/${pokemon}/`}
+                to={`/descripcion/${pokemon.name}/`}
                 style={{
                   textDecoration: "none",
                   color: "rgb(52, 105, 165)",
@@ -93,8 +102,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
                   gap: ".5em",
                 }}
               >
-                {types[pokemon] &&
-                  types[pokemon].map((type: string) => (
+                { pokemon.types.map((type: any)  => (
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -106,7 +114,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
                         justifyContent: "flex-end",
                       }}
                     >
-                      {type}
+                      {type.pokemon_v2_type.name}
                     </Typography>
                   ))}
               </Grid>
@@ -114,7 +122,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
           </Card>
         </Grid>
       ))}
-      <Pagination
+      {/* <Pagination
         sx={{
           padding: ".7em",
           borderTop: "1px solid rgb(225, 225, 225)",
@@ -131,7 +139,7 @@ const GridList = ({ pokemonList, image, types, page, count }: Props) => {
             {...item}
           />
         )}
-      />
+      /> */}
     </Grid>
   );
 };

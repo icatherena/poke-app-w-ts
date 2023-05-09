@@ -13,7 +13,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 /* import { useTheme } from "@emotion/react"; */
 
 interface Props {
-  pokemon?: any
+  /* pokemon?: any */
   numPokedex: number | undefined
   name: string | undefined
   image: string | undefined
@@ -21,12 +21,13 @@ interface Props {
   types: Array<Types>
   moves: Array<Move>
   abilities: Array<Abilities>
-  initialForm?: Array<Evoluciones>
+  initialForm?: Array<Evoluciones> 
   midForm: Array<Evoluciones>
   finalForm: Array<Evoluciones>
 }
 
 interface Evoluciones {
+  name: string
   species: {
     name: string
   }
@@ -45,7 +46,7 @@ interface Move {
   name: string
 }
 
-const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, initialForm, midForm, finalForm}: Props) => {
+const ImgMediaCard = ({name, numPokedex, /* bexp, image, */ abilities, moves, types, /* initialForm, midForm, finalForm */}: any) => {
   const [pokemon, setPokemon] = useState<string>();
   const [listaEvoluciones, setListaEvoluciones] = useState<Array<Evoluciones>>([]);
   const [mensaje, setMensaje] = useState<string | null>();
@@ -54,7 +55,7 @@ const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, i
     setPokemon(name);
   }, [name]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     evaluarEvoluciones();
   }, []);
 
@@ -62,7 +63,7 @@ const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, i
     // Para los casos que la cadena evolutiva es nula o indefinida
     // se setea su valor unicamente cuando es distinto de nulo o indefinido
     if (initialForm && initialForm.length > 0) {
-      if (initialForm !== null || initialForm !== undefined) {
+      if (initialForm !== null && initialForm !== undefined) {
         setListaEvoluciones(initialForm);
       }
       // En un inicio, mensaje al no estar definido setea la cadena que se le asignaría en el ese
@@ -120,7 +121,7 @@ const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, i
     }
   };
 
-  useEffect(() => {}, [listaEvoluciones]);
+  useEffect(() => {}, [listaEvoluciones]); */
 
   const pasarAMayus = (name: any) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
@@ -173,7 +174,7 @@ const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, i
             <CardMedia
               component="img"
               alt={name}
-              image={image}
+              image="https://w7.pngwing.com/pngs/282/481/png-transparent-pokemon-pokeball-illustration-pikachu-ash-ketchum-pokemon-pokeball-pokemon-johto-technology-thumbnail.png"
               sx={{
                 /* backgroundColor: "rgb(238, 249, 238)", */
                 height: "fit-content",
@@ -207,11 +208,11 @@ const ImgMediaCard = ({name, numPokedex, bexp, image, abilities, moves, types, i
               <Typography variant="body1">#{numPokedex}</Typography>
               <br />
 
-              <Divider >
+              {/* <Divider >
                 <b>ESPERIENCIA BASE</b>
               </Divider>
               <Typography variant="body1">{bexp} xp</Typography>
-              <br />
+              <br /> */}
 
               <Divider >
                 <b>POKEMÓN TIPO</b>

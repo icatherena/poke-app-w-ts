@@ -1,90 +1,47 @@
 import React, { useEffect, useState } from "react";
-import GridList from "../../components/GridList";
-import NavBar from "../../components/NavBar";
+
 import { getPokemonByName, getPokemones } from "../../api/apis";
-import { Grid } from "@mui/material";
+
 import { useLocation } from "react-router-dom";
+
+import GridList from "../../components/GridList";
 import Loading from "../../components/Loading";
+import NavBar from "../../components/NavBar";
+import NotFound from "../../components/NotFound";
 
-interface Pokemones {
-  name: string
-  image: string
-  type: Types 
+import { Grid } from "@mui/material";
+
+import { useQuery, gql } from '@apollo/client';
+
+const GET_POKEMONLIST = gql`
+  query GetPokemones {
+    pokemones: pokemon_v2_pokemon {
+      id
+      name
+      images: pokemon_v2_pokemonsprites {
+        sprites
+      }
+      types: pokemon_v2_pokemontypes {
+        pokemon_v2_type {
+          name
+        }
+      }
+    }
+  }
+`;
+
+interface Pokemon {
+  name: string;
+  id: number;
+  images: string | undefined;
+  types: any
 }
 
-interface Types {
-  name: string
-}
+const DisplayPokemones = () => {
+  const { loading, error, data } = useQuery(GET_POKEMONLIST);
+  console.log(data);
 
-const Grilla = () => {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const [pokemonList, setPokemonList] = useState<Array<string>>([])
-  const [count, setCount] = useState<number>(0)
-
-  const [image, setImage] = useState<Array<Pokemones>>([])
-  const [types, setTypes] = useState<Array<Pokemones>>([])
-
-  const location = useLocation();
-  const query = new URLSearchParams(location.search)
-  const page = parseInt(query.get("pagina") || "1", 10)
-
-  useEffect(() => {
-    getPokemones(page).then((res) => {
-      setPokemonList(res.data.results.map((pokemon: Pokemones) => pokemon.name));
-      setCount(/* (res.data.count % 12) +  */ 1 + (res.data.count / 12));
-    });
-  }, [page]);
-
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   for (let pokemon of pokemonList) {
-  //     getPokemonById(pokemon)
-  //       .then((res) => {
-  //         setImage((prevImage) => ({
-  //           ...prevImage,
-  //           [pokemon]:
-  //             res.data.sprites.other["official-artwork"].front_default,
-  //         }));
-  //         setTypes((prevType) => ({
-  //           ...prevType,
-  //           [pokemon]: res.data.types.map(
-  //             (type) => type.type.name
-  //           ) /* .join(', ') */,
-  //         }));
-  //       })
-  //       .catch((error) => console.log(error))
-  //       .finally(() => setIsLoading(false))
-  //   }
-  // }, [pokemonList]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    console.log(pokemonList)
-    Promise.all(
-      pokemonList.map((pokemon:string) =>
-        getPokemonByName(pokemon).then((res) => ({
-          name: pokemon,
-          image: res.data.sprites.other["official-artwork"].front_default,
-          types: res.data.types.map((type: Pokemones) => type.type.name),
-        }))
-      )
-    )
-      .then((results:any[]) => {
-        const newImage:any = {};
-        const newTypes:any = {};
-        results.forEach((result) => {
-          newImage[result.name] = result.image;
-          newTypes[result.name] = result.types;
-        });
-        setImage(newImage);
-        setTypes(newTypes);
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setIsLoading(false))
-  }, [pokemonList]);
-
-  return isLoading ? (
+  if (loading) return (
     <Grid container>
       <Grid item xs={12}>
         <NavBar />
@@ -93,7 +50,18 @@ const Grilla = () => {
         <Loading />
       </Grid>
     </Grid>
-  ) : (
+  );
+  if (error) return (
+    <Grid container>
+        <Grid item xs={12}>
+          <NavBar />
+        </Grid>
+        <Grid item xs={12}>
+          <NotFound />
+        </Grid>
+      </Grid>
+  );
+  return  (
     <>
       <Grid container>
         <Grid
@@ -116,16 +84,24 @@ const Grilla = () => {
           }}
         >
           <GridList
-            pokemonList={pokemonList}
-            image={image}
-            types={types}
-            page={page}
-            count={count}
+            pokemones = {data.pokemones}
           />
+        {/* {data.pokemones.map((pokemon: Pokemon) => (
+        <div key={pokemon.id}>
+          <h3>{pokemon.name}</h3>
+          <img src={pokemon.image} />
+          <br />
+          <h3>{pokemon.types.map((type: any) => type.pokemon_v2_type.name).join("/")}</h3>
+        </div>
+        ))
+        } */}
         </Grid>
       </Grid>
     </>
   );
-};
+}
 
-export default Grilla;
+export default DisplayPokemones;
+
+
+

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-
-import { getPokemonByName, getPokemones } from "../../api/apis";
+import React from "react";
 
 import { useLocation } from "react-router-dom";
+
+import { useQuery, gql } from '@apollo/client';
 
 import GridList from "../../components/GridList";
 import Loading from "../../components/Loading";
@@ -11,11 +11,9 @@ import NotFound from "../../components/NotFound";
 
 import { Grid } from "@mui/material";
 
-import { useQuery, gql } from '@apollo/client';
-
 const GET_POKEMONLIST = gql`
-  query GetPokemones {
-    pokemones: pokemon_v2_pokemon {
+  query GetPokemones($offset: Int!) {
+    pokemones: pokemon_v2_pokemon(offset: $offset, limit: 12) {
       id
       name
       images: pokemon_v2_pokemonsprites {
@@ -27,18 +25,31 @@ const GET_POKEMONLIST = gql`
         }
       }
     }
+    total_count: pokemon_v2_pokemon_aggregate {
+      aggregate {
+        count
+      }
+    }
   }
 `;
 
-interface Pokemon {
+/* interface Pokemon {
   name: string;
   id: number;
   images: string | undefined;
   types: any
-}
+  total_count: number
+} */
 
 const DisplayPokemones = () => {
-  const { loading, error, data } = useQuery(GET_POKEMONLIST);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("pagina") || "1", 10)
+  const offset = (page-1)*12
+
+  const { loading, error, data } = useQuery(GET_POKEMONLIST, {
+    variables: {page, offset}
+  });
   console.log(data);
 
   if (loading) return (
@@ -51,6 +62,7 @@ const DisplayPokemones = () => {
       </Grid>
     </Grid>
   );
+
   if (error) return (
     <Grid container>
         <Grid item xs={12}>
@@ -61,6 +73,7 @@ const DisplayPokemones = () => {
         </Grid>
       </Grid>
   );
+
   return  (
     <>
       <Grid container>
@@ -85,16 +98,9 @@ const DisplayPokemones = () => {
         >
           <GridList
             pokemones = {data.pokemones}
+            total_count={data.total_count.aggregate.count}
+            page={page}
           />
-        {/* {data.pokemones.map((pokemon: Pokemon) => (
-        <div key={pokemon.id}>
-          <h3>{pokemon.name}</h3>
-          <img src={pokemon.image} />
-          <br />
-          <h3>{pokemon.types.map((type: any) => type.pokemon_v2_type.name).join("/")}</h3>
-        </div>
-        ))
-        } */}
         </Grid>
       </Grid>
     </>

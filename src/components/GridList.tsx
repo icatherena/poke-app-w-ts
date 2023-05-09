@@ -12,27 +12,21 @@ import {
 import { Link } from "react-router-dom";
 
 interface Props {
-  /* pokemonList: Array<any>
-  image: Array<any>
-  types: Array<any>
-  page: number
-  count: number */
   pokemones: Array<Pokemon>
+  total_count: any
+  page: any
 }
 
 interface Pokemon {
     id: number
     name: Array<string>
-    images: string | undefined 
+    /* images: string | undefined  */
     types: Array<any>
 }
 
-interface Type {
-  pokemon_v2_type: any
-}
-
-const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: Props) => {
+const GridList = ({ pokemones, total_count, page }: Props) => {
   const theme = createTheme({});
+
   const pasarAMayus = (pokemon: any) => {
     return pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   };
@@ -59,7 +53,10 @@ const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: P
             }}
           >
             <CardMedia
-              image={pokemon.images}
+              component="img"
+              /* alt={pokemon.name} */
+              height="fit-content"
+              image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
             />
             <CardContent
               sx={{
@@ -122,7 +119,7 @@ const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: P
           </Card>
         </Grid>
       ))}
-      {/* <Pagination
+      <Pagination
         sx={{
           padding: ".7em",
           borderTop: "1px solid rgb(225, 225, 225)",
@@ -131,7 +128,7 @@ const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: P
           justifyContent: "flex-end",
         }}
         page={page}
-        count={count}
+        count={total_count}
         renderItem={(item) => (
           <PaginationItem
             component={Link}
@@ -139,7 +136,7 @@ const GridList = ({ /* pokemonList, image, types, page, count, */ pokemones }: P
             {...item}
           />
         )}
-      /> */}
+      />
     </Grid>
   );
 };

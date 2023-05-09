@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+import { useParams } from "react-router-dom";
+
+import { useQuery, gql } from "@apollo/client";
+
+import FloatingButton from "../../components/FloatingButton";
 import ImgMediaCard from "../../components/ImgMediaCard";
+import Loading from "../../components/Loading";
 import NavBar from "../../components/NavBar";
 import NotFound from "../../components/NotFound";
-import { useParams } from "react-router-dom";
-import FloatingButton from "../../components/FloatingButton";
-import {
-  getPokemonByName,
-  getChainIdById,
-  getEvolutionChainById,
-} from "../../api/apis";
-import { Grid } from "@mui/material";
-import Loading from "../../components/Loading";
 
-import { useQuery, gql } from '@apollo/client';
+import { Grid } from "@mui/material";
 
 const GET_POKEMON = gql`
   query GetPokemon($name: String!) {
-    pokemon: pokemon_v2_pokemon (where: {name: {_eq: $name}}) {
+    pokemon: pokemon_v2_pokemon(where: { name: { _eq: $name } }) {
       id
       name
       height
@@ -41,30 +39,31 @@ const GET_POKEMON = gql`
 `;
 
 interface Pokemon {
-  name: string
-  id: number
-
+  name: string;
+  id: number;
 }
 
 const DisplayPokemon = () => {
-  const {name} = useParams<{name: string}>();
+  const { name } = useParams<{ name: string }>();
   const { loading, error, data } = useQuery(GET_POKEMON, {
-    variables: {name},
+    variables: { name },
   });
-  console.log();
 
-  if (loading) return (
-    <Grid container>
-      <Grid item xs={12}>
-        <NavBar />
+  if (loading)
+    return (
+      <Grid container>
+        <Grid item xs={12}>
+          <NavBar />
+        </Grid>
+        <Grid item xs={12}>
+          <Loading />
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <Loading />
-      </Grid>
-    </Grid>
-  );
-  if (error) return (
-    <Grid container>
+    );
+
+  if (error)
+    return (
+      <Grid container>
         <Grid item xs={12}>
           <NavBar />
         </Grid>
@@ -72,72 +71,64 @@ const DisplayPokemon = () => {
           <NotFound />
         </Grid>
       </Grid>
-  );
-  console.log(data.pokemon.id);
+    );
+
+  console.log(data.pokemon[0]);
+
   return (
-    /* {data.pokemon.map(poke: Pokemon) => (
-      <div key={poke.id}>
-        <h3>{poke.name}</h3>
-      </div>
-    )} */
     <Grid container>
-        <Grid item xs={12}
-          sx = {{
-            position: 'fixed',
-            width: '100%',
-          }}
-        >
-          <NavBar />
-        </Grid>
-        <Grid item
-          position='fixed'
-          m={2}          
-        >
-              <FloatingButton type="list"/>
-          </Grid>
-        <Grid item xs={12}
-          mt = { 9 }
-        >
-          <ImgMediaCard
-            name={data.pokemon[0].name}
-            numPokedex={data.pokemon[0].id}
-            abilities={data.pokemon[0].abilities}
-            moves={data.pokemon[0].moves}
-            types={data.pokemon[0].types}
-            /* weight={data.pokemon[0].weight}
-            height={data.pokemon[0].height} */
+      <Grid
+        item
+        xs={12}
+        sx={{
+          position: "fixed",
+          width: "100%",
+        }}
+      >
+        <NavBar />
+      </Grid>
+      <Grid item position="fixed" m={2}>
+        <FloatingButton type="list" />
+      </Grid>
+      <Grid item xs={12} mt={9}>
+        <ImgMediaCard
+          name={data.pokemon[0].name}
+          numPokedex={data.pokemon[0].id}
+          abilities={data.pokemon[0].abilities}
+          moves={data.pokemon[0].moves}
+          types={data.pokemon[0].types}
+          weight={data.pokemon[0].weight}
+          height={data.pokemon[0].height}
+        />
+      </Grid>
+      <Grid
+        container
+        px={2}
+        sx={{
+          position: "fixed",
+          top: "50%",
+          justifyContent: "space-between",
+        }}
+      >
+        <Grid item>
+          <FloatingButton
+            pokemon={data.pokemon[0].name}
+            pokeId={data.pokemon[0].id}
+            type="prev"
+            disabled={data.pokemon[0].id == undefined}
           />
         </Grid>
-        <Grid container
-        px={
-          2
-        }
-          sx = {{
-              position: 'fixed',
-              top: '50%',
-              justifyContent: 'space-between',
-
-          }}
-        >
-          <Grid item>
-            <FloatingButton 
-              pokemon = {data.pokemon[0].name} 
-              pokeId = {data.pokemon[0].id}
-              type = "prev"
-              disabled = {data.pokemon[0].id == undefined}
-            />
-          </Grid>
-          <Grid item>
-            <FloatingButton 
-              pokemon = {data.pokemon[0].name} 
-              pokeId = {data.pokemon[0].id}
-              /* name={pokemon}  */
-              type="next"/>
-          </Grid>
+        <Grid item>
+          <FloatingButton
+            pokemon={data.pokemon[0].name}
+            pokeId={data.pokemon[0].id}
+            type="next"
+          />
         </Grid>
       </Grid>
-    )
-}
+    </Grid>
+  );
+};
 
 export default DisplayPokemon;
 //--------------------------------------------------------------------------//
@@ -172,7 +163,7 @@ export default DisplayPokemon;
 
 //   useEffect(() => {
 //     setIsLoading(true);
-    
+
 //     getPokemonByName(name)
 //       .then((res) => {
 //         setPokemon(res.data.name);
@@ -183,7 +174,7 @@ export default DisplayPokemon;
 //         setPokeTypes(res.data.types);
 //         setPokeMoves(res.data.moves);
 
-//         setPokeSpeciesUrl(res.data.species.url); 
+//         setPokeSpeciesUrl(res.data.species.url);
 //         /* console.log(res.data.species.url); */
 //         let speciesId = res.data.species.url.split("/")[6];
 //         /* console.log(speciesId) */
@@ -217,7 +208,7 @@ export default DisplayPokemon;
 //       })
 
 //       .finally(() => setIsLoading(false));
-      
+
 //   }, [name]);
 
 //   return (
@@ -242,7 +233,7 @@ export default DisplayPokemon;
 //         </Grid>
 //         <Grid item
 //           position='fixed'
-//           m={2}          
+//           m={2}
 //         >
 //               <FloatingButton type="list"/>
 //           </Grid>
@@ -277,16 +268,16 @@ export default DisplayPokemon;
 //           }}
 //         >
 //           <Grid item>
-//             <FloatingButton 
-//               pokemon = {pokemon} 
+//             <FloatingButton
+//               pokemon = {pokemon}
 //               pokeId = {pokeId}
 //               type = "prev"
 //               disabled = {pokeId == undefined}
 //             />
 //           </Grid>
 //           <Grid item>
-//             <FloatingButton 
-//               pokemon = {pokemon} 
+//             <FloatingButton
+//               pokemon = {pokemon}
 //               pokeId = {pokeId}
 //               /* name={pokemon}  */
 //               type="next"/>
@@ -304,7 +295,7 @@ export default DisplayPokemon;
 //       </Grid>
 //     ))
 //   )
-    
+
 // };
 
 // export default Description;

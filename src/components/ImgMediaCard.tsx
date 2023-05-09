@@ -13,7 +13,6 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 /* import { useTheme } from "@emotion/react"; */
 
 interface Props {
-  /* pokemon?: any */
   numPokedex: number | undefined
   name: string | undefined
   image: string | undefined
@@ -46,7 +45,7 @@ interface Move {
   name: string
 }
 
-const ImgMediaCard = ({name, numPokedex, /* bexp, image, */ abilities, moves, types, /* initialForm, midForm, finalForm */}: any) => {
+const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weight }: any) => {
   const [pokemon, setPokemon] = useState<string>();
   const [listaEvoluciones, setListaEvoluciones] = useState<Array<Evoluciones>>([]);
   const [mensaje, setMensaje] = useState<string | null>();
@@ -174,7 +173,7 @@ const ImgMediaCard = ({name, numPokedex, /* bexp, image, */ abilities, moves, ty
             <CardMedia
               component="img"
               alt={name}
-              image="https://w7.pngwing.com/pngs/282/481/png-transparent-pokemon-pokeball-illustration-pikachu-ash-ketchum-pokemon-pokeball-pokemon-johto-technology-thumbnail.png"
+              image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${numPokedex}.png`}
               sx={{
                 /* backgroundColor: "rgb(238, 249, 238)", */
                 height: "fit-content",
@@ -290,15 +289,15 @@ const ImgMediaCard = ({name, numPokedex, /* bexp, image, */ abilities, moves, ty
               </Typography>
               <br />
 
-              {/* <Divider variant="body1"><b>ALTURA</b></Divider>
+              <Divider><b>ALTURA</b></Divider>
               <Typography variant="body1">
-                  {props.weight} cm
+                  {weight} dm
               </Typography><br/>
                 
-              <Divider variant="body1"><b>PESO</b></Divider>
+              <Divider><b>PESO</b></Divider>
               <Typography variant="body1">
-                  {props.height} kg
-              </Typography> */}
+                  {height} hg
+              </Typography>
             </CardContent>
           </Card>
         </Grid>

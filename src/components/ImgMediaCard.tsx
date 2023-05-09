@@ -45,7 +45,7 @@ interface Move {
   name: string
 }
 
-const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weight }: any) => {
+const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weight, evolution }: any) => {
   const [pokemon, setPokemon] = useState<string>();
   const [listaEvoluciones, setListaEvoluciones] = useState<Array<Evoluciones>>([]);
   const [mensaje, setMensaje] = useState<string | null>();
@@ -224,48 +224,7 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               <Divider>
                 <b>CADENA EVOLUTIVA</b>
               </Divider>
-              <Grid container justifyContent={"center"}>
-                {mensaje ? (
-                  <Grid item>
-                    <Typography>{mensaje}</Typography>
-                  </Grid>
-                ) : (
-                  listaEvoluciones.map((item: any, index) => (
-                    <Grid item xs={12} key={index}>
-                      <Link
-                        to={`/descripcion/${item}/`} 
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          textAlign: "center",
-
-                          textDecoration: "none",
-
-                          color: "rgb(52, 105, 165)",
-                          /* "&:hover": {
-                            color: "rgb(36,73,115)",
-                            weight: "bold",
-                          }, */
-                        }}
-                      >
-                        {item}
-                        <OpenInNewIcon
-                          fontSize="small"
-                          sx={{
-                            color: "rgb(52, 105, 165)",
-                            "&:hover": {
-                              color: "rgb(36,73,115)",
-                              weight: "bold",
-                            },
-                          }}
-                        />
-                      </Link>
-                    </Grid>
-                  ))
-                )}
-              </Grid>
+              <Typography>{evolution.map((item:any)=>item)}</Typography>
               <br />
 
               <Divider>

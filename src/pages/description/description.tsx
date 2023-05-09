@@ -34,6 +34,14 @@ const GET_POKEMON = gql`
           name
         }
       }
+      pokemon_species: pokemon_v2_pokemonspecy {
+        evolution_chain: pokemon_v2_evolutionchain {
+          id
+          species: pokemon_v2_pokemonspecies {
+            name
+          }
+        }
+      }
     }
   }
 `;
@@ -41,6 +49,7 @@ const GET_POKEMON = gql`
 interface Pokemon {
   name: string;
   id: number;
+  evolutions: any;
 }
 
 const DisplayPokemon = () => {
@@ -73,7 +82,8 @@ const DisplayPokemon = () => {
       </Grid>
     );
 
-  console.log(data.pokemon[0]);
+  /* console.log(data); */
+  console.log(data.pokemon[0].pokemon_species.evolution_chain?.species.map((item: any) => item.name))
 
   return (
     <Grid container>
@@ -99,6 +109,7 @@ const DisplayPokemon = () => {
           types={data.pokemon[0].types}
           weight={data.pokemon[0].weight}
           height={data.pokemon[0].height}
+          evolution={data.pokemon[0].pokemon_species.evolution_chain?.species.map((item: any) => item.name)}
         />
       </Grid>
       <Grid

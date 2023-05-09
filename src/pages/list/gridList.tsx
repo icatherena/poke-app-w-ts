@@ -24,6 +24,16 @@ const GET_POKEMONLIST = gql`
           name
         }
       }
+      evolutions: pokemon_v2_pokemonevolution {
+        pokemon_species: pokemon_v2_pokemonspecy {
+          evolution_chain: pokemon_v2_evolutionchain {
+            id
+            pokemon_v2_pokemonspecies {
+              name
+            }
+          }
+        }
+      }
     }
     total_count: pokemon_v2_pokemon_aggregate {
       aggregate {
@@ -98,7 +108,7 @@ const DisplayPokemones = () => {
         >
           <GridList
             pokemones = {data.pokemones}
-            total_count={data.total_count.aggregate.count}
+            total_count={Math.ceil(/* data.total_count.aggregate.count%12 + */ data.total_count.aggregate.count/12)}
             page={page}
           />
         </Grid>

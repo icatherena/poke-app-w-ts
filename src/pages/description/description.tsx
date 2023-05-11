@@ -83,7 +83,7 @@ const DisplayPokemon = () => {
     );
 
   /* console.log(data); */
-  console.log(data.pokemon[0].pokemon_species.evolution_chain?.species.map((item: any) => item.name))
+  console.log(data.pokemon[0].pokemon_species?.evolution_chain?.species.map((item: any) => item.name))
 
   return (
     <Grid container>
@@ -98,7 +98,7 @@ const DisplayPokemon = () => {
         <NavBar />
       </Grid>
       <Grid item position="fixed" m={2}>
-        <FloatingButton type="list" />
+        <FloatingButton type="grilla" />
       </Grid>
       <Grid item xs={12} mt={9}>
         <ImgMediaCard
@@ -112,7 +112,7 @@ const DisplayPokemon = () => {
           evolution={data.pokemon[0].pokemon_species.evolution_chain?.species.map((item: any) => item.name)}
         />
       </Grid>
-      <Grid
+      {/* <Grid
         container
         px={2}
         sx={{
@@ -136,7 +136,7 @@ const DisplayPokemon = () => {
             type="next"
           />
         </Grid>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

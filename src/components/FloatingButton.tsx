@@ -19,8 +19,8 @@ const FloatingButton = ({pokemon, pokeId, type}: any) => {
       setRedirectUrl(`/descripcion/${parseInt(pokeId) - 1}`);
       setIcon(<NavigateBeforeIcon fontSize="large" color="primary" />);
       setTooltipName("Anterior");
-    } else if (type === "list") {
-      setRedirectUrl(`/lista`)
+    } else if (type === "grilla") {
+      setRedirectUrl(`/grilla`)
       setIcon(<ArrowBackIcon fontSize="small" color="primary" />);
       setTooltipName("Volver a la lista");
     }

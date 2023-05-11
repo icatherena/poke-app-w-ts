@@ -12,115 +12,12 @@ import { Link } from "react-router-dom";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 /* import { useTheme } from "@emotion/react"; */
 
-interface Props {
-  numPokedex: number | undefined
-  name: string | undefined
-  image: string | undefined
-  bexp: number | undefined
-  types: Array<Types>
-  moves: Array<Move>
-  abilities: Array<Abilities>
-  initialForm?: Array<Evoluciones> 
-  midForm: Array<Evoluciones>
-  finalForm: Array<Evoluciones>
-}
-
-interface Evoluciones {
-  name: string
-  species: {
-    name: string
-  }
-  evolves_to: any
-}
-
-interface Types {
-  name: string
-}
-
-interface Abilities {
-  name: string
-}
-
-interface Move {
-  name: string
-}
-
 const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weight, evolution }: any) => {
   const [pokemon, setPokemon] = useState<string>();
-  const [listaEvoluciones, setListaEvoluciones] = useState<Array<Evoluciones>>([]);
-  const [mensaje, setMensaje] = useState<string | null>();
 
   useEffect(() => {
     setPokemon(name);
   }, [name]);
-
-  /* useEffect(() => {
-    evaluarEvoluciones();
-  }, []);
-
-  const evaluarEvoluciones = () => {
-    // Para los casos que la cadena evolutiva es nula o indefinida
-    // se setea su valor unicamente cuando es distinto de nulo o indefinido
-    if (initialForm && initialForm.length > 0) {
-      if (initialForm !== null && initialForm !== undefined) {
-        setListaEvoluciones(initialForm);
-      }
-      // En un inicio, mensaje al no estar definido setea la cadena que se le asignaría en el ese
-      // Para salvar esa situación, se setea el valor de mensaje en null
-      setMensaje(null);
-    } else {
-        setMensaje("No posee cadena evolutiva");
-    }
-    // A continuación se evalúa si existe y si contiene un elemento
-    if (midForm && midForm.length > 0) {
-      // Para concatenar los elementos que traería midForm si fuera un array
-      // y no un único elemento,
-      // se crea un segundo array
-      let midList: Array<any> = [];
-      // Se evalúa si midForm es o no un array de elementos
-      if (Array.isArray(midForm)) {
-        // Si cumple la condición, se mapea midForm y se asigna al array midList
-        midList = midForm.map((item: any) => item);
-        // A continuación, para añadir los elementos del array midList,
-        // se usa concat para traer una copia de los elementos que ya están
-        // seteados en listaEvoluciones y se añaden los que trae midList
-        setListaEvoluciones((prevList) => prevList.concat(midList));
-      } else {
-        // Si midForm no cumple con la condición (no es un array),
-        // se setea midForm de la misma forma que se hizo con midList usando concat
-        setListaEvoluciones((prevList) => prevList.concat(midForm));
-      }
-    }
-    // Como no se tiene certeza de que el pokemon inicial tenga o no
-    // una segunda evolución, se evalua nuevamente si contiene al menos un elemento
-    if (finalForm && finalForm.length > 0) {
-      // Se evalúa si finalForm tiene algún valor distinto de indefinido o nulo
-      // Si no se evaluara en este momento, se añadiría más adelante
-      // un array de elementos nulos/indefinidos que se mostrarían al mapear
-      // listaEvoluciones dentro del return
-      if (finalForm !== null && finalForm !== undefined) {
-        // Si cumple condición, se evalúa a continuación si se trata de un array
-        if (Array.isArray(finalForm)) {
-          // Debido a que finalForm a diferencia de initial y midForm trae los elementos como
-          // un array, para concatenarlos y evitar que se añadan a listaEvoluciones como otro array
-          // se recorre el array mediante el uso de for, y sólo si el elemento no es nulo, se añade
-          // a listaEvoluciones
-          for (let i = 0; i < finalForm.length; i++) {
-            if (finalForm[i] !== null) {
-              setListaEvoluciones((prevList) =>
-                prevList.concat(finalForm[i])
-              );
-            }
-          }
-        } else {
-          // Si no cumple la condición (no es un array, simplemente se añade el elemento a listaEvoluciones)
-          setListaEvoluciones((prevList) => prevList.concat(finalForm));
-        }
-      }
-    }
-  };
-
-  useEffect(() => {}, [listaEvoluciones]); */
 
   const pasarAMayus = (name: any) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
@@ -207,12 +104,6 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               <Typography variant="body1">#{numPokedex}</Typography>
               <br />
 
-              {/* <Divider >
-                <b>ESPERIENCIA BASE</b>
-              </Divider>
-              <Typography variant="body1">{bexp} xp</Typography>
-              <br /> */}
-
               <Divider >
                 <b>POKEMÓN TIPO</b>
               </Divider>
@@ -224,7 +115,37 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               <Divider>
                 <b>CADENA EVOLUTIVA</b>
               </Divider>
-              <Typography>{evolution.map((item:any)=>item)}</Typography>
+              <Grid container justifyContent={"center"}>
+                {evolution.map((item: any) => (
+                    <Grid item xs={12}>
+                      <Link
+                        to={`/descripcion/${item}/`} 
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                          textDecoration: "none",
+                          color: "rgb(52, 105, 165)",
+                        }}
+                      >
+                        {item}
+                        <OpenInNewIcon
+                          fontSize="small"
+                          sx={{
+                            color: "rgb(52, 105, 165)",
+                            "&:hover": {
+                              color: "rgb(36,73,115)",
+                              weight: "bold",
+                            },
+                          }}
+                        />
+                      </Link>
+                    </Grid>
+                  ))
+                }
+              </Grid>
               <br />
 
               <Divider>

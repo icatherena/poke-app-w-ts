@@ -64,7 +64,7 @@ const Home = () => {
         }}
       >
         <img src={logoUrl} alt='pokeLogo' height='100vh' />
-        <Button variant="outlined" size="small" href={`/lista`}>
+        <Button variant="outlined" size="small" href={`/grilla`}>
           Gotta catch'em all!
         </Button>
       </Grid>

@@ -14,7 +14,13 @@ import { Grid } from "@mui/material";
 
 const GET_POKEMON = gql`
   query GetPokemon($name: String!) {
-    pokemon: pokemon_v2_pokemon(where: { name: { _eq: $name } }) {
+    pokemon: pokemon_v2_pokemon (
+      where: { 
+        name: { 
+          _eq: $name 
+        } 
+      }
+    ) {
       id
       name
       height

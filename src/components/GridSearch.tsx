@@ -101,7 +101,7 @@ const GridSearch = ({ pokemones }: Props) => {
                   gap: ".5em",
                 }}
               >
-                { pokemon.types.map((type: any)  => (
+                { pokemon?.types?.map((type: any)  => (
                     <Typography
                       variant="body2"
                       color="text.secondary"

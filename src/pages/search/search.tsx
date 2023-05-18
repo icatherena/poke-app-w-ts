@@ -7,9 +7,9 @@ import Loading from "../../components/Loading";
 import NavBar from "../../components/NavBar";
 import NotFound from "../../components/NotFound";
 
-/* import Select as ReactSelect, { MultiValue } from "react-select"; */
+/* import Select, { MultiValue } from "react-select"; */
 
-import { Box, Checkbox, Chip, Grid, IconButton, InputBase, OutlinedInput, Paper, TextField, Typography, Theme, useTheme } from "@mui/material";
+import { Checkbox, Grid, IconButton, InputBase, Paper, Typography } from "@mui/material";
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,7 +26,7 @@ const GET_DATA = gql`
 `;
 
 const GET_POKEMON_BY_NAME = gql`
-query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeight: Int, $maxWeight: Int) {
+query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeight: Int, $maxWeight: Int, $types: String) {
     pokemones: pokemon_v2_pokemon (
         where: {
             name: {
@@ -40,13 +40,19 @@ query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeig
                     name: {
                         _ilike: $color
                     }
-                }
+                },
             },
             weight: {
                 _gte: $minWeight,
                 _lte: $maxWeight,
-            }
-            
+            },
+            pokemon_v2_pokemontypes: {
+                pokemon_v2_type: {
+                    name: {
+                        _ilike: $types
+                    }
+                }
+            },
         }
     ) {
         name
@@ -54,28 +60,24 @@ query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeig
         images: pokemon_v2_pokemonsprites {
             sprites
         }
+        types: pokemon_v2_pokemontypes {
+            pokemon_v2_type {
+              name
+            }
+        }
     }
 }
 `;
 
-/* pokemon_v2_pokemontypes: {
-    pokemon_v2_type: {
-        name: {
-            _in: $types
-        }
-    }
-}    */   
-
 const Search = () => {
     const searchedName = localStorage.getItem('searchedName');
-    const theme = useTheme();
 
     const [name, setName] = useState(searchedName);
     const [isBaby, setIsBaby] = useState<boolean>(false);
     const [color, setColor] = useState<string>("");
     const [minWeight, setMinWeight] = useState<number>(0);
     const [maxWeight, setMaxWeight] = useState<number>(100);
-    const [types, setTypes] = useState<string[]>([]);
+    const [types, setTypes] = useState<string>("");
 
     const { data: datos } = useQuery(GET_DATA);
 
@@ -89,7 +91,7 @@ const Search = () => {
             color,
             minWeight,
             maxWeight,
-            /* types */
+            types
         }
     });
 
@@ -119,6 +121,20 @@ const Search = () => {
                 setMaxWeight(minWeight);
             }
         }
+    };
+
+    /*  const handleTypes = (event: SelectChangeEvent<typeof types>) => {
+         const {
+             target: { value },
+         } = event;
+         setTypes(
+             // On autofill we get a stringified value.
+             typeof value === 'string' ? value.split(',') : value,
+         );
+     }; */
+
+    const handleTypes = (e: SelectChangeEvent) => {
+        setTypes(e.target.value);
     };
 
     if (error) return (
@@ -240,6 +256,7 @@ const Search = () => {
                             sx={{
                                 flex: 1,
                             }}
+                            disabled
                             placeholder="¿Es bebé?"
                             type="text"
                         />
@@ -252,10 +269,8 @@ const Search = () => {
                             mt: .2,
                             minWidth: 120,
                             border: '1px solid rgb(39, 114, 185)',
-                            /* outlineStyle: '1px solid rgb(39, 114, 185)', */
                             borderRadius: '1em',
                             boxShadow: 1,
-                            /* disableUnderline:true, */
                             "&:hover": {
                                 boxShadow: 1,
                                 border: '0px solid rgb(39, 114, 185)',
@@ -280,7 +295,6 @@ const Search = () => {
                             label="Color"
                             onChange={handleChangeColor}
                             sx={{
-                                /* border: '0px solid rgb(39, 114, 185)', */
                                 borderRadius: '1em',
                                 outline: '0px',
                             }}
@@ -307,12 +321,12 @@ const Search = () => {
                         component="form"
                         sx={{
                             height: "40px",
-                            px: '4px',
+                            px: '10px',
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            width: 130,
+                            width: 100,
                             border: '1px solid rgb(39, 114, 185)',
                             borderRadius: '1em',
                             "&:hover": {
@@ -320,14 +334,9 @@ const Search = () => {
                             },
                         }}
                     >
-                        <TextField
-                            sx={{
-                                flex: 1,
-                                border: "none",
-                                borderRadius: 0,
-                            }}
-                            label="Peso Mínimo"
-                            placeholder="Peso mínimo..."
+                        <InputBase
+                            /* label="Peso Mínimo" */
+                            placeholder="Peso mínimo"
                             type="number"
                             value={minWeight}
                             onChange={(e: any) => setMinWeight(Number(e.target.value))}
@@ -343,12 +352,12 @@ const Search = () => {
                         component="form"
                         sx={{
                             height: "40px",
-                            px: '4px',
+                            px: "10px",
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            width: 130,
+                            width: 100,
                             border: '1px solid rgb(39, 114, 185)',
                             borderRadius: '1em',
                             "&:hover": {
@@ -356,22 +365,17 @@ const Search = () => {
                             },
                         }}
                     >
-                        <TextField
-                            sx={{
-                                flex: 1,
-                                border: "none",
-                                borderRadius: 0,
-                            }}
-                            label="Peso Máximo"
-                            placeholder="Peso máximo..."
+                        <InputBase
+                            placeholder="Peso máximo"
                             type="number"
                             value={maxWeight}
-                            onChange={(e) => setMaxWeight(Number(e.target.value))}
+                            onChange={(e: any) => setMaxWeight(Number(e.target.value))}
                             inputProps={{
                                 step: 10,
                                 min: 0,
                                 disableUnderline: true,
                                 onKeyDown: handleMaxWeight,
+                                label: "Peso Máximo",
                             }}
                         />
                     </Paper>
@@ -381,13 +385,12 @@ const Search = () => {
                     <Paper
                         component="form"
                         sx={{
-                            height: "40px",
-                            px: '4px',
+                            width: 170,
+                            height: 40,
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            width: 170,
                             border: '1px solid rgb(39, 114, 185)',
                             borderRadius: '1em',
                             "&:hover": {
@@ -395,7 +398,62 @@ const Search = () => {
                             },
                         }}
                     >
-                        
+                        <FormControl
+                            sx={{
+                                minWidth: 170,
+                                border: '1px solid rgb(39, 114, 185)',
+                                borderRadius: '1em',
+                                boxShadow: 1,
+                                "&:hover": {
+                                    boxShadow: 1,
+                                    border: '0px solid rgb(39, 114, 185)',
+                                },
+                                "&selected": {
+                                    boxShadow: 1,
+                                    border: '0px solid rgb(39, 114, 185)',
+                                },
+                            }}
+                            size="small"
+                        >
+                            <InputLabel>
+                                Tipos
+                            </InputLabel>
+                            {/* <Select
+                                multiple
+                                value={types}
+                                onChange={handleTypes}
+                                input={
+                                    <OutlinedInput label="Tipo" />
+                                }
+                            >
+                                {datos?.types?.map((type: any) => (
+                                    <MenuItem
+                                        value={type.name}
+                                    >
+                                        {type.name}
+                                    </MenuItem>
+                                ))}
+                            </Select> */}
+                            <Select
+                                labelId="demo-select-small-label"
+                                disableUnderline={true}
+                                id="demo-select-small"
+                                value={types}
+                                label="Color"
+                                onChange={handleTypes}
+                                sx={{
+                                    borderRadius: '1em',
+                                    outline: '0px',
+                                }}
+                            >
+                                <MenuItem value={types}>
+                                    <em>Ninguno</em>
+                                </MenuItem>
+                                {datos?.types?.map((item: any) => (
+                                    <MenuItem value={item.name}>{item.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Paper>
                 </Grid>
             </Grid>

@@ -14,8 +14,6 @@ import { Grid, IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import GridSearch from "../../components/GridSearch";
 
-
-
 const GET_POKEMONLIST = gql`
   query GetPokemones($offset: Int!) {
     pokemones: pokemon_v2_pokemon(
@@ -66,7 +64,8 @@ const DisplayPokemones = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault(); // prevent the default form submission behavior
-    window.location.href = `/busqueda/${name}/`;
+    window.location.href = `/busqueda`;
+    localStorage.setItem('searchedName', name);
   }
 
   if (loading) return (
@@ -146,7 +145,7 @@ const DisplayPokemones = () => {
                 }
               }}
             />
-            <Link to={`/busqueda/${name}/`}>
+            <Link to={`/busqueda`}>
               <IconButton
                 type="button"
                 /* onClick={() => getSearchedName()} */

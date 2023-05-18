@@ -20,7 +20,7 @@ const theme = useTheme()
         <Route path='/' element={<Home />} />
         <Route path='/lista' element={<List />} />
         <Route path='/grilla' element={<Grilla />}  />
-        <Route path='/busqueda/:searchedName' element={<Search />} />
+        <Route path='/busqueda' element={<Search />} />
         <Route path='/descripcion/:name' element={<DisplayPokemon />} />
         <Route path='*' element={<Home />} />
       </Routes>

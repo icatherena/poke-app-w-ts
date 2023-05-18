@@ -13,6 +13,7 @@ import { Checkbox, Grid, IconButton, InputBase, Paper, Typography } from "@mui/m
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
+import { OutlinedInput } from "@mui/material";
 
 const GET_DATA = gql`
   query GetData {
@@ -26,7 +27,7 @@ const GET_DATA = gql`
 `;
 
 const GET_POKEMON_BY_NAME = gql`
-query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeight: Int, $maxWeight: Int, $types: String) {
+query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeight: Int, $maxWeight: Int, $types: [String]) {
     pokemones: pokemon_v2_pokemon (
         where: {
             name: {
@@ -49,7 +50,7 @@ query GetPokemonByName($name: String, $isBaby: Boolean, $color: String, $minWeig
             pokemon_v2_pokemontypes: {
                 pokemon_v2_type: {
                     name: {
-                        _ilike: $types
+                        _in: $types
                     }
                 }
             },
@@ -77,7 +78,7 @@ const Search = () => {
     const [color, setColor] = useState<string>("");
     const [minWeight, setMinWeight] = useState<number>(0);
     const [maxWeight, setMaxWeight] = useState<number>(100);
-    const [types, setTypes] = useState<string>("");
+    const [types, setTypes] = useState<string[]>([]);
 
     const { data: datos } = useQuery(GET_DATA);
 
@@ -91,7 +92,7 @@ const Search = () => {
             color,
             minWeight,
             maxWeight,
-            types
+            types,
         }
     });
 
@@ -123,19 +124,21 @@ const Search = () => {
         }
     };
 
-    /*  const handleTypes = (event: SelectChangeEvent<typeof types>) => {
-         const {
-             target: { value },
-         } = event;
-         setTypes(
-             // On autofill we get a stringified value.
-             typeof value === 'string' ? value.split(',') : value,
-         );
-     }; */
-
-    const handleTypes = (e: SelectChangeEvent) => {
-        setTypes(e.target.value);
+    const handleChangeTypes = (e: SelectChangeEvent<typeof types>) => {
+        const {
+            target: { value },
+        } = e;
+        setTypes(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
     };
+
+    console.log(data);
+
+    /* const handleTypes = (e: SelectChangeEvent) => {
+        setTypes(e.target.value);
+    }; */
 
     if (error) return (
         <Grid container>
@@ -371,13 +374,20 @@ const Search = () => {
                             value={maxWeight}
                             onChange={(e: any) => setMaxWeight(Number(e.target.value))}
                             inputProps={{
-                                step: 10,
-                                min: 0,
-                                disableUnderline: true,
+                                step:10,
+                                min: {minWeight},
                                 onKeyDown: handleMaxWeight,
                                 label: "Peso Máximo",
                             }}
                         />
+                        {/* <InputBase
+                            sx={{
+                                flex: 1,
+                            }}
+                            disabled
+                            placeholder="Peso Máximo"
+                            type="text"
+                        /> */}
                     </Paper>
                 </Grid>
                 {/* pokemon type multiple selection filter */}
@@ -418,39 +428,29 @@ const Search = () => {
                             <InputLabel>
                                 Tipos
                             </InputLabel>
-                            {/* <Select
+                            <Select
                                 multiple
                                 value={types}
-                                onChange={handleTypes}
-                                input={
-                                    <OutlinedInput label="Tipo" />
-                                }
-                            >
-                                {datos?.types?.map((type: any) => (
-                                    <MenuItem
-                                        value={type.name}
-                                    >
-                                        {type.name}
-                                    </MenuItem>
-                                ))}
-                            </Select> */}
-                            <Select
-                                labelId="demo-select-small-label"
-                                disableUnderline={true}
-                                id="demo-select-small"
-                                value={types}
-                                label="Color"
-                                onChange={handleTypes}
+                                label="Tipo"
+                                onChange={handleChangeTypes}
                                 sx={{
                                     borderRadius: '1em',
                                     outline: '0px',
                                 }}
+                                input={
+                                    <OutlinedInput label="Tipo" />
+                                }
                             >
-                                <MenuItem value={types}>
+                                {/* <MenuItem value={types}>
                                     <em>Ninguno</em>
-                                </MenuItem>
+                                </MenuItem> */}
                                 {datos?.types?.map((item: any) => (
-                                    <MenuItem value={item.name}>{item.name}</MenuItem>
+                                    <MenuItem
+                                        key={item.name}
+                                        value={item.name}
+                                    >
+                                        {item.name}
+                                    </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>

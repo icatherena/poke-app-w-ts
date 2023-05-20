@@ -55,14 +55,19 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               borderRadius: "1em",
               boxShadow: 3,
               display: "flex",
+              flexDirection: "row",
               alignItems: "center",
-              [theme.breakpoints.down("md")]: {
-                width: "70%",
-                flexDirection: "column",
-              },
               [theme.breakpoints.up("xs")]: {
                 minWidth: "130%",
-                mx: "2em"
+                mx: "2em",
+                flexDirection: "column",
+              },
+              [theme.breakpoints.up("md")]: {
+                minWidth: "70%",
+                flexDirection: "row",
+              },
+              [theme.breakpoints.down("md")]: {
+                minWidth: "110%",
               },
             }}
           >

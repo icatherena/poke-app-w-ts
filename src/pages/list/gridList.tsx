@@ -10,7 +10,7 @@ import NavBar from "../../components/NavBar";
 import NotFound from "../../components/NotFound";
 /* import SearchBar from "../../components/SearchBar"; */
 
-import { Grid, IconButton, InputBase, Paper } from "@mui/material";
+import { Grid, IconButton, InputBase, Paper, createTheme } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import GridSearch from "../../components/GridSearch";
 
@@ -62,6 +62,8 @@ const DisplayPokemones = () => {
 
   const [name, setName] = useState("");
 
+  const theme = createTheme();
+
   const handleSubmit = (e: any) => {
     e.preventDefault(); // prevent the default form submission behavior
     window.location.href = `/busqueda`;
@@ -109,6 +111,12 @@ const DisplayPokemones = () => {
         sx={{
           position: "relative",
           zIndex: "50%",
+          [theme.breakpoints.up("xs")]: {
+            position: "static",
+          },
+          [theme.breakpoints.down("sm")]: {
+            position: "static",
+          },
         }}
       >
         <Grid
@@ -117,7 +125,23 @@ const DisplayPokemones = () => {
           sx={{
             position: "absolute",
             top: "1em",
-            right: "5em"
+            right: "5em",
+            [theme.breakpoints.up("xs")]: {
+              position: "static",
+              pt: "6em",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            [theme.breakpoints.down("sm")]: {
+              position: "static",
+              pt: "6em",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            },
           }}
         >
           <Paper
@@ -166,6 +190,10 @@ const DisplayPokemones = () => {
           sx={{
             mt: "7em",
             mb: "2em",
+            [theme.breakpoints.up("xs")]: {
+              ml: "0.5em",
+              mt: "2em"
+            },
           }}
         >
           <GridList

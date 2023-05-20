@@ -30,14 +30,12 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
       container
       sx={{
         padding: "2em",
-        /* backgroundColor: "rgb(238, 249, 238)" */
       }}
     >
       <Grid
         item
         xs={12}
         sx={{
-          /* backgroundColor: "rgba(255, 0, 255)", */
           display: "flex",
           justifyContent: "center",
         }}
@@ -49,7 +47,7 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
             display: "flex",
             justifyContent: "center",
           }}
-        > 
+        >
           <Card
             sx={{
               backgroundColor: "rgb(238, 249, 238)",
@@ -58,13 +56,14 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               boxShadow: 3,
               display: "flex",
               alignItems: "center",
-              /* gap: "1em", */
-              
-                [theme.breakpoints.down("md")]: {
-                  width: "70%",
-                  flexDirection: "column",
-                }
-              
+              [theme.breakpoints.down("md")]: {
+                width: "70%",
+                flexDirection: "column",
+              },
+              [theme.breakpoints.up("xs")]: {
+                minWidth: "130%",
+                mx: "2em"
+              },
             }}
           >
             <CardMedia
@@ -91,7 +90,7 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
                 [theme.breakpoints.down("md")]: {
                   borderLeft: "none",
                   borderTop: "1px solid rgb(39,114,185)",
-                }
+                },
               }}
             >
               <Typography gutterBottom variant="h4" component="div">
@@ -117,33 +116,33 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
               </Divider>
               <Grid container justifyContent={"center"}>
                 {evolution.map((item: any) => (
-                    <Grid item xs={12}>
-                      <Link
-                        to={`/descripcion/${item}/`} 
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          textAlign: "center",
-                          textDecoration: "none",
+                  <Grid item xs={12}>
+                    <Link
+                      to={`/descripcion/${item}/`}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textAlign: "center",
+                        textDecoration: "none",
+                        color: "rgb(52, 105, 165)",
+                      }}
+                    >
+                      {item}
+                      <OpenInNewIcon
+                        fontSize="small"
+                        sx={{
                           color: "rgb(52, 105, 165)",
+                          "&:hover": {
+                            color: "rgb(36,73,115)",
+                            weight: "bold",
+                          },
                         }}
-                      >
-                        {item}
-                        <OpenInNewIcon
-                          fontSize="small"
-                          sx={{
-                            color: "rgb(52, 105, 165)",
-                            "&:hover": {
-                              color: "rgb(36,73,115)",
-                              weight: "bold",
-                            },
-                          }}
-                        />
-                      </Link>
-                    </Grid>
-                  ))
+                      />
+                    </Link>
+                  </Grid>
+                ))
                 }
               </Grid>
               <br />
@@ -171,12 +170,12 @@ const ImgMediaCard = ({ abilities, height, moves, name, numPokedex, types, weigh
 
               <Divider><b>ALTURA</b></Divider>
               <Typography variant="body1">
-                  {weight} dm
-              </Typography><br/>
-                
+                {weight} dm
+              </Typography><br />
+
               <Divider><b>PESO</b></Divider>
               <Typography variant="body1">
-                  {height} hg
+                {height} hg
               </Typography>
             </CardContent>
           </Card>

@@ -35,6 +35,14 @@ const GridSearch = ({ pokemones }: Props) => {
         justifyContent: "center",
         alignItems: "center",
         gap: "2em",
+        [theme.breakpoints.up("xs")]: {
+          width: "80%",
+          mx: "2em"
+        },
+        [theme.breakpoints.up("sm")]: {
+          width: "100%",
+          mx: 0
+        },
       }}
     >
       {pokemones.map((pokemon: Pokemon) => (

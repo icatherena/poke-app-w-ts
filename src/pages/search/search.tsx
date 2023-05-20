@@ -15,6 +15,7 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 import SearchIcon from '@mui/icons-material/Search';
 import { OutlinedInput } from "@mui/material";
 import { createTheme } from "@mui/material";
+import { isJSDocUnknownTag } from "typescript";
 
 const GET_DATA = gql`
   query GetData {
@@ -181,12 +182,15 @@ const Search = () => {
             <Grid container
                 sx={{
                     mt: "7em",
-                    mx: "5em",
+                    mx: "6em",
                     zIndex: "50",
                     width: "90%",
                     gap: "1.5em",
                     [theme.breakpoints.down("lg")]: {
-                        gap: "1em"
+                        mx: "2em",
+                        gap: "1em",
+                        justifyContent: "center",
+                        alignItems: "center",                        
                     },
                 }}
             >
@@ -489,7 +493,10 @@ const Search = () => {
                         sx={{
                             mt: "2em",
                             mb: "2em",
-
+                            [theme.breakpoints.up("xs")]: {
+                                ml: "0.5em",
+                                mt: "2em"
+                            },
                         }}
                     >
                         <GridSearch pokemones={data.pokemones} />

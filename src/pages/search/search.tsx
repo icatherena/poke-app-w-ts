@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 
@@ -14,6 +14,7 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 
 import SearchIcon from '@mui/icons-material/Search';
 import { OutlinedInput } from "@mui/material";
+import { createTheme } from "@mui/material";
 
 const GET_DATA = gql`
   query GetData {
@@ -80,21 +81,26 @@ const Search = () => {
     const [maxWeight, setMaxWeight] = useState<number>(100);
     const [types, setTypes] = useState<string[]>([]);
 
+    const theme = createTheme();
+
     const { data: datos } = useQuery(GET_DATA);
 
     //useLazyQuery retorna un array, 
     //el primer elemento de este array se lo utiliza para llamar a la query,
     //el segundo elemento es un objeto
-    const [getSearchedName, { data, loading, error }] = useLazyQuery(GET_POKEMON_BY_NAME, {
-        variables: {
-            name: `%${name}%`, // lo traigo de useState
-            isBaby,
-            color,
-            minWeight,
-            maxWeight,
-            types,
+    const [getSearch, { data, loading, error }] = useLazyQuery(GET_POKEMON_BY_NAME);
+
+    useEffect(() => {
+        if (datos?.types && types.length === 0) {
+            setTypes(datos.types.map((item: any) => item.name));
         }
-    });
+    }, [datos?.types, types])
+
+    useEffect(() => {
+        if (datos?.color && color.length === 0) {
+            setColor(`%`);
+        }
+    }, [datos?.color, color])
 
     const handleChangeColor = (e: SelectChangeEvent) => {
         setColor(e.target.value);
@@ -133,12 +139,6 @@ const Search = () => {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
-
-    console.log(data);
-
-    /* const handleTypes = (e: SelectChangeEvent) => {
-        setTypes(e.target.value);
-    }; */
 
     if (error) return (
         <Grid container>
@@ -183,17 +183,22 @@ const Search = () => {
                     mt: "7em",
                     mx: "5em",
                     zIndex: "50",
+                    width: "90%",
+                    gap: "1.5em",
+                    [theme.breakpoints.down("lg")]: {
+                        gap: "1em"
+                    },
                 }}
             >
                 <Grid item>
                     <Paper
                         component="form"
                         sx={{
-
-                            p: '2px 4px',
+                            height: 40,
+                            width: 200,
+                            px: "10px",
                             display: 'flex',
                             alignItems: 'center',
-                            width: 235,
                             border: '1px solid rgb(39, 114, 185)',
                             borderRadius: '1em',
                             "&:hover": {
@@ -210,29 +215,11 @@ const Search = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            onKeyPress={(e) => {
-                                /* e.preventDefault(); */
-                                if (e.key === "Enter") {
-                                    getSearchedName();
-                                }
-                            }}
                         />
-                        <IconButton
-                            type="button"
-                            onClick={() => getSearchedName()}
-                            sx={{ p: '6px' }}
-                            aria-label="search"
-                        >
-                            <SearchIcon />
-                        </IconButton>
                     </Paper>
                 </Grid>
                 {/* isBaby checkbox filter  */}
-                <Grid item
-                    sx={{
-                        mx: "1.5em",
-                    }}
-                >
+                <Grid item>
                     <Paper
                         component="form"
                         sx={{
@@ -265,7 +252,7 @@ const Search = () => {
                         />
                     </Paper>
                 </Grid>
-                {/* color simple selection filter */}
+                {/* single color selection filter */}
                 <Grid item>
                     <FormControl
                         sx={{
@@ -291,9 +278,6 @@ const Search = () => {
                             Color
                         </InputLabel>
                         <Select
-                            labelId="demo-select-small-label"
-                            disableUnderline={true}
-                            id="demo-select-small"
                             value={color}
                             label="Color"
                             onChange={handleChangeColor}
@@ -302,8 +286,8 @@ const Search = () => {
                                 outline: '0px',
                             }}
                         >
-                            <MenuItem value={color}>
-                                <em>Ninguno</em>
+                            <MenuItem value={`%`}>
+                                <em>Todos</em>
                             </MenuItem>
                             {datos?.color?.map((item: any) => (
                                 <MenuItem value={item.name}>{item.name}</MenuItem>
@@ -314,7 +298,6 @@ const Search = () => {
                 {/* pokemon weight range filter */}
                 <Grid item
                     sx={{
-                        mx: "1.5em",
                         display: "flex",
                         flexDirection: "row",
                         gap: "1.5em",
@@ -335,10 +318,20 @@ const Search = () => {
                             "&:hover": {
                                 boxShadow: 3,
                             },
+                            position: "relative",
                         }}
                     >
+                        <InputLabel
+                            shrink
+                            sx={{
+                                position: "absolute",
+                                bottom: "1.56em",
+                                left: "1em"
+                            }}
+                        >
+                            Peso Mínimo
+                        </InputLabel>
                         <InputBase
-                            /* label="Peso Mínimo" */
                             placeholder="Peso mínimo"
                             type="number"
                             value={minWeight}
@@ -346,7 +339,6 @@ const Search = () => {
                             inputProps={{
                                 step: 10,
                                 min: 0,
-                                disableUnderline: true,
                                 onKeyDown: handleMinWeight,
                             }}
                         />
@@ -366,28 +358,31 @@ const Search = () => {
                             "&:hover": {
                                 boxShadow: 3,
                             },
+                            position: "relative",
                         }}
                     >
+                        <InputLabel
+                            shrink
+                            sx={{
+                                position: "absolute",
+                                bottom: "1.56em",
+                                left: "1em"
+                            }}
+                        >
+                            Peso Máximo
+                        </InputLabel>
                         <InputBase
                             placeholder="Peso máximo"
                             type="number"
                             value={maxWeight}
                             onChange={(e: any) => setMaxWeight(Number(e.target.value))}
                             inputProps={{
-                                step:10,
-                                min: {minWeight},
+                                step: 10,
+                                min: { minWeight },
                                 onKeyDown: handleMaxWeight,
                                 label: "Peso Máximo",
                             }}
                         />
-                        {/* <InputBase
-                            sx={{
-                                flex: 1,
-                            }}
-                            disabled
-                            placeholder="Peso Máximo"
-                            type="text"
-                        /> */}
                     </Paper>
                 </Grid>
                 {/* pokemon type multiple selection filter */}
@@ -395,7 +390,7 @@ const Search = () => {
                     <Paper
                         component="form"
                         sx={{
-                            width: 170,
+                            width: 180,
                             height: 40,
                             display: 'flex',
                             flexDirection: 'row',
@@ -410,7 +405,7 @@ const Search = () => {
                     >
                         <FormControl
                             sx={{
-                                minWidth: 170,
+                                minWidth: 180,
                                 border: '1px solid rgb(39, 114, 185)',
                                 borderRadius: '1em',
                                 boxShadow: 1,
@@ -441,9 +436,6 @@ const Search = () => {
                                     <OutlinedInput label="Tipo" />
                                 }
                             >
-                                {/* <MenuItem value={types}>
-                                    <em>Ninguno</em>
-                                </MenuItem> */}
                                 {datos?.types?.map((item: any) => (
                                     <MenuItem
                                         key={item.name}
@@ -456,15 +448,44 @@ const Search = () => {
                         </FormControl>
                     </Paper>
                 </Grid>
+                <Grid item
+                    sx={{
+                        height: 41,
+                        border: "1px solid rgb(39, 114, 185)",
+                        borderRadius: "1em",
+                        boxShadow: 1,
+                        "&:hover": {
+                            boxShadow: 3,
+                        }
+                    }}
+                >
+                    <IconButton
+                        type="button"
+                        onClick={() => getSearch(
+                            {
+                                variables: {
+                                    name: `%${name}%`, // lo traigo de useState
+                                    isBaby,
+                                    color,
+                                    minWeight,
+                                    maxWeight,
+                                    types,
+                                }
+                            }
+                        )}
+                        /* onClick={handleApplyFilters} */
+                        sx={{ p: '.36em' }}
+                        aria-label="search"
+                    >
+                        <SearchIcon />
+                    </IconButton>
+                </Grid>
             </Grid>
 
             {data && data.pokemones.length > 0 ? (
-                <Grid container
-                    sx={{
-                        // ml: '5em',
-                        // backgroundColor: 'red'
-                    }}>
+                <Grid container>
                     <Grid item
+                        xs={12}
                         sx={{
                             mt: "2em",
                             mb: "2em",

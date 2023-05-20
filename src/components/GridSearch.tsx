@@ -38,11 +38,7 @@ const GridSearch = ({ pokemones }: Props) => {
       }}
     >
       {pokemones.map((pokemon: Pokemon) => (
-        <Grid item key={pokemon.id}
-          /* sx = {{
-            mx: "5em"
-          }} */
-        >
+        <Grid item key={pokemon.id}>
           <Card
             sx={{
               maxWidth: 345,

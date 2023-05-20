@@ -99,6 +99,7 @@ const DisplayPokemones = () => {
           sx={{
             position: "fixed",
             width: "100%",
+            zIndex: "100%"
           }}
         >
           <NavBar />
@@ -107,6 +108,7 @@ const DisplayPokemones = () => {
       <Grid container
         sx={{
           position: "relative",
+          zIndex: "50%",
         }}
       >
         <Grid
